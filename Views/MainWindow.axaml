@@ -1,0 +1,122 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="using:PaxWatermark.Views"
+        x:Class="PaxWatermark.Views.MainWindow"
+        Title="PAX Watermark"
+        Width="1180" Height="760" MinWidth="820" MinHeight="520"
+        WindowStartupLocation="CenterScreen">
+
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="22,18,22,14">
+
+    <!-- Header -->
+    <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,14">
+      <Border Width="40" Height="40" CornerRadius="10" BoxShadow="0 0 18 0 #6600C8FF, 0 0 30 3 #3319F58C">
+        <Border.Background>
+          <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Color="#00C8FF" Offset="0" />
+            <GradientStop Color="#19F58C" Offset="1" />
+          </LinearGradientBrush>
+        </Border.Background>
+        <Viewbox Margin="5">
+          <ContentControl x:Name="HeaderArt" />
+        </Viewbox>
+      </Border>
+      <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center" Spacing="1">
+        <TextBlock Text="PAX WATERMARK" FontSize="20" FontWeight="Bold" LetterSpacing="2" Classes="neon" />
+        <TextBlock Text="Stamp your logo on one photo or a whole folder" Classes="muted" FontSize="12" />
+      </StackPanel>
+      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+        <TextBlock x:Name="ZoomText" Text="100%" Classes="value" VerticalAlignment="Center" MinWidth="44" TextAlignment="Right" />
+        <Button x:Name="ActualSizeButton" Content="100%" Classes="ghost" MinHeight="32" Padding="10,4"
+                ToolTip.Tip="Show the photo at its real size" />
+        <ToggleButton x:Name="FitToggle" Content="Fit to window" Classes="chip"
+                      ToolTip.Tip="Scale the preview to fit the window (the saved file is always full size)" />
+      </StackPanel>
+    </Grid>
+
+    <!-- Toolbar -->
+    <WrapPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,14">
+      <Button x:Name="OpenPhotoButton" Content="Open photo…" Margin="0,0,8,0" />
+      <Button x:Name="OpenWatermarkButton" Content="Open watermark…" Margin="0,0,8,0" />
+      <Button x:Name="SaveButton" Content="Save stamped image…" Classes="primary" Margin="0,0,8,0" />
+      <Button x:Name="BatchButton" Content="Batch: stamp a folder…" Margin="0,0,8,0"
+              ToolTip.Tip="Stamps every image in a folder with the same position, size, opacity and rotation. Copies go into a &quot;watermarked&quot; folder inside it; the originals are not changed." />
+    </WrapPanel>
+
+    <!-- Preview and side panel -->
+    <Grid Grid.Row="2" ColumnDefinitions="*,300" ColumnSpacing="14">
+
+      <Border Classes="card" Padding="0" ClipToBounds="True" Background="#0B0E13">
+        <Grid>
+          <ScrollViewer x:Name="Scroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <v:StampCanvas x:Name="Preview" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" />
+          </ScrollViewer>
+          <StackPanel x:Name="EmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="6">
+            <TextBlock Text="Open a photo to start" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center" Classes="neon" />
+            <TextBlock Text="Then open your watermark (a PNG with a transparent background works best) and drag it into place."
+                       Classes="muted" TextWrapping="Wrap" MaxWidth="360" TextAlignment="Center" />
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <ScrollViewer Grid.Column="1">
+        <StackPanel Spacing="12">
+
+          <Border Classes="card" Padding="16">
+            <StackPanel Spacing="12">
+              <TextBlock Text="WATERMARK" Classes="label" />
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                <Border Width="56" Height="56" CornerRadius="8" Background="#0B0E13" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1">
+                  <Image x:Name="WatermarkThumb" Margin="4" Stretch="Uniform" />
+                </Border>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                  <TextBlock x:Name="WatermarkName" Text="None yet" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                  <TextBlock x:Name="WatermarkInfo" Text="Open a logo or signature image" Classes="muted" FontSize="11" TextWrapping="Wrap" />
+                </StackPanel>
+              </Grid>
+
+              <Grid ColumnDefinitions="64,*,44" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="6">
+                <TextBlock Text="Size" VerticalAlignment="Center" ToolTip.Tip="Watermark width, as a share of the photo's width" />
+                <Slider x:Name="SizeSlider" Grid.Column="1" Minimum="2" Maximum="100" SmallChange="1" LargeChange="5"
+                        ToolTip.Tip="Watermark width, as a share of the photo's width" />
+                <TextBlock x:Name="SizeValue" Grid.Column="2" Classes="value" VerticalAlignment="Center" TextAlignment="Right" />
+                <TextBlock Grid.Row="1" Text="Opacity" VerticalAlignment="Center" />
+                <Slider x:Name="OpacitySlider" Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" />
+                <TextBlock x:Name="OpacityValue" Grid.Row="1" Grid.Column="2" Classes="value" VerticalAlignment="Center" TextAlignment="Right" />
+                <TextBlock Grid.Row="2" Text="Rotation" VerticalAlignment="Center" />
+                <Slider x:Name="RotationSlider" Grid.Row="2" Grid.Column="1" Minimum="-180" Maximum="180" SmallChange="1" LargeChange="15" />
+                <TextBlock x:Name="RotationValue" Grid.Row="2" Grid.Column="2" Classes="value" VerticalAlignment="Center" TextAlignment="Right" />
+              </Grid>
+
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                <UniformGrid x:Name="SpotGrid" Columns="3" Rows="3" Width="108" Height="72" />
+                <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
+                  <TextBlock Text="Position" />
+                  <TextBlock x:Name="PositionValue" Classes="value" />
+                  <TextBlock Text="Drag it on the photo, or pick a spot" Classes="muted" FontSize="11" TextWrapping="Wrap" />
+                </StackPanel>
+              </Grid>
+
+              <Button x:Name="ResetButton" Content="Reset" Classes="ghost" HorizontalAlignment="Left" MinHeight="32" Padding="10,4" />
+            </StackPanel>
+          </Border>
+
+          <Border Classes="card" Padding="16">
+            <StackPanel Spacing="6">
+              <TextBlock Text="PHOTO" Classes="label" />
+              <TextBlock x:Name="PhotoName" Text="None yet" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+              <TextBlock x:Name="PhotoInfo" Text="JPEG, PNG, WebP, BMP or GIF" Classes="muted" FontSize="11" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+
+    <!-- Status line -->
+    <Grid Grid.Row="3" ColumnDefinitions="Auto,*" ColumnSpacing="8" Margin="2,12,0,0">
+      <Ellipse x:Name="StatusDot" Width="8" Height="8" Fill="#19F58C" VerticalAlignment="Center" Classes="pulse" />
+      <TextBlock x:Name="StatusText" Grid.Column="1" Text="Ready" Classes="muted" FontSize="12" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+    </Grid>
+  </Grid>
+</Window>
