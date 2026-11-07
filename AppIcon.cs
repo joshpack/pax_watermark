@@ -37,26 +37,10 @@ public static class AppIcon
         return art;
     }
 
-    /// <summary>The full icon: the mark on a rounded cyan-to-green tile.</summary>
+    /// <summary>The full icon (see <see cref="BrandIcon"/>).</summary>
     public static Control Build(int size)
     {
-        var tile = new Grid { Width = size, Height = size };
-        tile.Children.Add(new Border
-        {
-            CornerRadius = new CornerRadius(size * 0.22),
-            Background = new LinearGradientBrush
-            {
-                StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
-                EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
-                GradientStops =
-                {
-                    new GradientStop(Color.Parse("#00C8FF"), 0),
-                    new GradientStop(Color.Parse("#19F58C"), 1),
-                },
-            },
-        });
-        tile.Children.Add(new Viewbox { Margin = new Thickness(size * 0.12), Child = Art() });
-        return tile;
+        return BrandIcon.Build(size);
     }
 
     public static RenderTargetBitmap Render(int size)
