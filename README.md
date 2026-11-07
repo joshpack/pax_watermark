@@ -3,7 +3,7 @@
 **Stamp your logo on a photo, or on a whole folder of them.** A small Windows app: open a photo and a watermark image, drag the watermark where you want it, set its size, opacity and rotation, and save. The saved file keeps the photo's full resolution. Batch mode puts the same watermark in the same spot on every image in a folder.
 
 <p align="center">
-  <img src="docs/screenshots/main.png" width="720" alt="PAX Watermark: a sunset photo with a SAMPLE studio logo tilted in the bottom-right corner, the toolbar above, and the side panel with size, opacity and rotation sliders and a nine-spot position picker">
+  <img src="docs/screenshots/main.png" width="720" alt="PAX Watermark: the dark PAX title bar, a sunset photo with a SAMPLE studio logo tilted in the bottom-right corner, the toolbar above, and the side panel with size, opacity and rotation sliders and a nine-spot position picker">
 </p>
 
 ## Features
@@ -17,7 +17,9 @@
 - **Batch.** Pick a folder and every JPEG, PNG, WebP, BMP and GIF in it is stamped into a `watermarked` subfolder. The originals are never changed, and the watermark file itself is skipped if it sits in the same folder. A batch can be stopped halfway.
 - **Keeps the format.** JPEG stays JPEG, PNG stays PNG, WebP stays WebP; BMP and GIF are saved as PNG, so the file name always matches what's inside.
 - **Phone photos come out upright.** The EXIF orientation is applied when a photo is opened.
-- **Remembers** the last folders, the watermark you used last time, and your size, opacity, rotation and position.
+- **Remembers** the last folders, the watermark you used last time, and your size, opacity, rotation and position, plus the window's size, position and maximized state.
+- **One copy at a time.** Starting it again (or opening a photo with it) brings the open window to the front instead of starting a second copy.
+- **Works with [PAX Toolkit](https://github.com/joshpack/PaxToolkit):** same dark title bar as the other PAX apps, installed and kept up to date from there.
 
 ## Supported systems
 
@@ -35,7 +37,7 @@
 **By hand:**
 
 1. Install the **[.NET 10 Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)** (x64) if you don't have it. The plain ".NET Runtime" is enough; the ".NET Desktop Runtime" includes it, so that works too.
-2. Download **`PaxWatermark-1.0.1-win-x64.zip`** from **[the latest release](https://github.com/joshpack/pax_watermark/releases/latest)**.
+2. Download **`PaxWatermark-1.1.0-win-x64.zip`** from **[the latest release](https://github.com/joshpack/pax_watermark/releases/latest)**.
 3. Unzip it somewhere permanent, for example `%USERPROFILE%\Apps\PaxWatermark`.
 4. Run `PaxWatermark.exe`. It doesn't need administrator rights.
 
@@ -62,7 +64,7 @@ You can also start it with a photo: `PaxWatermark.exe "C:\Photos\beach.jpg"` (or
 
 ## Settings file
 
-Saved as JSON in `%APPDATA%\PaxWatermark\settings.json`: the last folders used for photos, watermarks, saving and batches, the last watermark file, `Size` (watermark width as a share of the photo's width, 0.02 to 1), `Opacity` (0 to 1), `Rotation` (degrees, -180 to 180), `CenterX` and `CenterY` (the watermark's center as a share of the photo's width and height) and `FitToWindow`. Delete the file to go back to the defaults. The environment variable `PAXWM_DATA` points the app at another folder instead.
+Saved as JSON in `%APPDATA%\PaxWatermark\settings.json`: the last folders used for photos, watermarks, saving and batches, the last watermark file, `Size` (watermark width as a share of the photo's width, 0.02 to 1), `Opacity` (0 to 1), `Rotation` (degrees, -180 to 180), `CenterX` and `CenterY` (the watermark's center as a share of the photo's width and height) and `FitToWindow`. The window's size, position and maximized state are kept next to it in `windows.json`. Delete the files to go back to the defaults. The environment variable `PAXWM_DATA` points the app at another folder instead.
 
 ## Self-test
 
@@ -70,7 +72,7 @@ Saved as JSON in `%APPDATA%\PaxWatermark\settings.json`: the last folders used f
 PaxWatermark.exe --self-test C:\Temp\paxwm-test
 ```
 
-Generates a made-up photo and logo in memory (no files of yours are read), stamps them one at a time and as a batch over three generated images (JPEG, PNG and WebP of different shapes), checks every output's size, format and that the watermark landed where it should, checks EXIF orientation handling and the settings file, and writes the results to `report.txt`. It also saves `window.png` and `window-empty.png`, pictures of the main window drawn off-screen, so nothing appears on your screen. Exit code 0 means everything passed. Settings go to a `data` folder inside the test folder unless `PAXWM_DATA` is set.
+Generates a made-up photo and logo in memory (no files of yours are read), stamps them one at a time and as a batch over three generated images (JPEG, PNG and WebP of different shapes), checks every output's size, format and that the watermark landed where it should, checks EXIF orientation handling and the settings file, and writes the results to `report.txt`. It also saves `window.png` and `window-empty.png`, pictures of the main window with its title bar, checks that the window's size, position and maximized state are saved and restored (and that a spot no longer on any screen is ignored), and that starting a second copy hands over to the first. Windows are drawn with Avalonia's headless renderer, so nothing appears on your screen. Exit code 0 means everything passed. Settings go to a `data` folder inside the test folder unless `PAXWM_DATA` is set.
 
 ## Uninstall
 
@@ -96,6 +98,8 @@ The exe's icon is `Assets/PaxWatermark.ico`, drawn by the app itself: `PaxWaterm
 | Path | What's there |
 | --- | --- |
 | `Program.cs` | Start-up, `--write-icon` and `--self-test` |
+| `PaxStandard.cs` | The PAX title bar and remembered window placement, shared by the PAX apps |
+| `SingleInstance.cs` | Hands a second start over to the running copy |
 | `App.axaml(.cs)` | Theme and opening the main window |
 | `Views/MainWindow.axaml(.cs)` | The window: toolbar, side panel, zoom, saving and batch |
 | `Views/StampCanvas.cs` | The live preview and dragging the watermark |

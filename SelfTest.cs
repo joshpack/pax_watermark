@@ -1,5 +1,6 @@
 using System.Text;
 using Avalonia;
+using Avalonia.LogicalTree;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using PaxWatermark.Imaging;
@@ -11,7 +12,8 @@ namespace PaxWatermark;
 
 /// <summary>
 /// --self-test DIR: stamps generated pictures (no real photos are read) one at a time and as a batch, checks the
-/// outputs, and renders the main window to PNGs off-screen, so nothing appears on the screen.
+/// outputs, renders the main window (with its PAX title bar) to PNGs and checks remembered placement and the
+/// single-instance hand-off. It runs on Avalonia's headless platform: no OS window is created, so nothing appears on the screen.
 /// </summary>
 internal static class SelfTest
 {
@@ -24,6 +26,26 @@ internal static class SelfTest
     {
         _r.AppendLine($"[{(pass ? "PASS" : "FAIL")}] {name}{(detail.Length > 0 ? " - " + detail : "")}");
         _ok &= pass;
+    }
+
+    /// <summary>Runs everything on the headless platform, writes report.txt, and returns the exit code.</summary>
+    public static int RunAndReport()
+    {
+        var report = new StringBuilder();
+        bool ok;
+        try
+        {
+            ok = Run(report);
+        }
+        catch (Exception ex)
+        {
+            report.AppendLine("CRASH: " + ex);
+            ok = false;
+        }
+
+        report.AppendLine(ok ? "RESULT: PASS" : "RESULT: FAIL");
+        File.WriteAllText(Path.Combine(Dir!, "report.txt"), report.ToString());
+        return ok ? 0 : 1;
     }
 
     public static bool Run(StringBuilder report)
@@ -148,7 +170,88 @@ internal static class SelfTest
             w.SetStatus("Watermark studio-logo.png (640 × 240). Drag it on the photo, or use the sliders.");
         });
 
+        CheckPlacement();
+        CheckSingleInstance();
         return _ok;
+    }
+
+    /// <summary>PaxChrome.RememberPlacement: a moved and resized window is saved and restored; a spot off every screen is ignored.</summary>
+    private static void CheckPlacement()
+    {
+        const string key = "selftest";
+        var file = Path.Combine(AppSettings.Folder, "windows.json");
+        if (File.Exists(file))
+            File.Delete(file);
+
+        var a = OffScreen(new MainWindow(new AppSettings()));
+        PaxStandard.PaxChrome.RememberPlacement(a, key);
+        a.Show();
+        Pump();
+        a.Width = 900;
+        a.Height = 600;
+        a.Position = new PixelPoint(-29000, -29000);
+        a.UpdateLayout();
+        Pump();
+        a.Close();
+        var json = File.Exists(file) ? File.ReadAllText(file) : "";
+        Check("Placement saved to windows.json", json.Contains("\"selftest\"") && json.Contains("\"Width\":900") && json.Contains("\"Height\":600") && json.Contains("\"X\":-29000"), json);
+
+        // Size comes back; the position is off every screen, so it is ignored and the window keeps its own spot.
+        var b = OffScreen(new MainWindow(new AppSettings()));
+        PaxStandard.PaxChrome.RememberPlacement(b, key);
+        Check("Placement restored (size), off-screen spot ignored", b.Width == 900 && b.Height == 600 && b.Position == new PixelPoint(-30000, -30000),
+            $"{b.Width}x{b.Height} at {b.Position}");
+
+        // An on-screen spot and the maximized flag come back too (this window is never shown).
+        File.WriteAllText(file, """{"selftest":{"X":120,"Y":90,"Width":1000,"Height":640,"Maximized":true}}""");
+        var c = OffScreen(new MainWindow(new AppSettings()));
+        PaxStandard.PaxChrome.RememberPlacement(c, key);
+        Check("Placement restored (position, maximized)", c.Position == new PixelPoint(120, 90) && c.WindowState == WindowState.Maximized && c.Width == 1000,
+            $"{c.Width}x{c.Height} at {c.Position}, {c.WindowState}");
+        Check("Title bar: icon, name, minimize / maximize / close",
+            HasTitleBar(c, "PAX Watermark", captionButtons: 3));
+    }
+
+    /// <summary>A second start hands its arguments to the running copy over the named pipe.</summary>
+    private static void CheckSingleInstance()
+    {
+        var name = "PaxWatermark-selftest-" + Guid.NewGuid().ToString("N")[..8];
+        string[]? got = null;
+        using var done = new ManualResetEventSlim();
+        using (SingleInstance.Listen(name, args => { got = args; done.Set(); }))
+        {
+            var sent = SingleInstance.Send(name, ["C:\\Photos\\sample photo.jpg"]);
+            done.Wait(3000);
+            Check("Second start forwards its arguments to the running copy", sent && got is ["C:\\Photos\\sample photo.jpg"], got is null ? "nothing received" : string.Join("|", got));
+        }
+    }
+
+    private static void Pump()
+    {
+        for (var i = 0; i < 5; i++)
+        {
+            Avalonia.Threading.Dispatcher.UIThread.RunJobs();
+            Avalonia.Headless.AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+        }
+    }
+
+    private static MainWindow OffScreen(MainWindow w)
+    {
+        w.WindowStartupLocation = WindowStartupLocation.Manual;
+        w.Position = new PixelPoint(-30000, -30000);
+        w.ShowActivated = false;
+        w.ShowInTaskbar = false;
+        return w;
+    }
+
+    private static bool HasTitleBar(Window w, string title, int captionButtons)
+    {
+        var all = w.GetLogicalDescendants().ToList();
+        return w.WindowDecorations == WindowDecorations.BorderOnly
+               && all.OfType<TextBlock>().Any(t => t.Text == title)
+               && all.OfType<Image>().Any(i => i.Width == 18)
+               && all.OfType<Button>().Count(b => b.Classes.Contains("pax-caption")) == captionButtons
+               && all.OfType<Button>().Any(b => b.Classes.Contains("pax-close"));
     }
 
     private static void RenderWindow(string file, Action<MainWindow>? setup)
@@ -156,7 +259,7 @@ internal static class SelfTest
         var settings = new AppSettings { FitToWindow = true, Placement = new Placement(0.79, 0.84, 0.3, 0.8, -8) };
         var window = new MainWindow(settings)
         {
-            // Far off every screen, never activated, not on the taskbar: nothing appears for the user.
+            // Headless already keeps it off the screen; these keep it that way if run on a real platform.
             WindowStartupLocation = WindowStartupLocation.Manual,
             Position = new PixelPoint(-30000, -30000),
             ShowActivated = false,
@@ -168,6 +271,7 @@ internal static class SelfTest
         setup?.Invoke(window);
         window.UpdateLayout();
         window.UpdateLayout();   // fit-to-window changes the zoom during the first pass
+        Pump();
         using var bmp = new RenderTargetBitmap(new PixelSize(1180, 760));
         bmp.Render(window);
         var path = Path.Combine(Dir!, file);

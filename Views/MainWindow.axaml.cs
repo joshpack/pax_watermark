@@ -43,6 +43,10 @@ public partial class MainWindow : Window
         _s = settings;
         InitializeComponent();
         Icon = AppIcon.Create(128);
+        // The PAX title bar replaces the system one (detach the XAML body first so it can be re-parented).
+        var body = (Control)Content!;
+        Content = null;
+        Content = PaxStandard.PaxChrome.Wrap(this, body, "PAX Watermark", BrandIcon.Render(36));
         Ctl<ContentControl>("HeaderArt").Content = AppIcon.Art();
 
         _loading = true;

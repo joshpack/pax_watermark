@@ -10,36 +10,38 @@ namespace PaxWatermark;
 
 public partial class App : Application
 {
-    public override void Initialize() => AvaloniaXamlLoader.Load(this);
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+        Styles.Add(PaxStandard.PaxChrome.Styles());   // caption-button hover colours of the PAX title bar
+    }
 
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
         {
-            if (SelfTest.Dir is { } dir)
-            {
-                lifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
-                var report = new System.Text.StringBuilder();
-                bool ok;
-                try
-                {
-                    ok = SelfTest.Run(report);
-                }
-                catch (Exception ex)
-                {
-                    report.AppendLine("CRASH: " + ex);
-                    ok = false;
-                }
-
-                report.AppendLine(ok ? "RESULT: PASS" : "RESULT: FAIL");
-                File.WriteAllText(Path.Combine(dir, "report.txt"), report.ToString());
-                Dispatcher.UIThread.Post(() => lifetime.Shutdown(ok ? 0 : 1));
-                base.OnFrameworkInitializationCompleted();
-                return;
-            }
-
             var window = new MainWindow(AppSettings.Load());
+            PaxStandard.PaxChrome.RememberPlacement(window, "main");
             lifetime.MainWindow = window;
+
+            var restoreTo = window.WindowState;
+            window.PropertyChanged += (_, e) =>
+            {
+                if (e.Property == Avalonia.Controls.Window.WindowStateProperty && window.WindowState != Avalonia.Controls.WindowState.Minimized)
+                    restoreTo = window.WindowState;
+            };
+
+            // Started again: open the photo it was given (if any) and bring this window to the front.
+            var listener = SingleInstance.Listen(SingleInstance.Name(Program.AppId), args => Dispatcher.UIThread.Post(async () =>
+            {
+                if (window.WindowState == Avalonia.Controls.WindowState.Minimized)
+                    window.WindowState = restoreTo;
+                window.Activate();
+                var next = args.FirstOrDefault(a => File.Exists(a) && Stamper.IsImage(a));
+                if (next is not null)
+                    await window.OpenPhoto(next);
+            }));
+            lifetime.Exit += (_, _) => listener.Dispose();
 
             // "Open with" / a photo dropped on the exe: open it straight away.
             var photo = lifetime.Args?.FirstOrDefault(a => File.Exists(a) && Stamper.IsImage(a));
