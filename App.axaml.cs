@@ -2,18 +2,18 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using PaxWatermark.Imaging;
-using PaxWatermark.Services;
-using PaxWatermark.Views;
+using pxdWatermark.Imaging;
+using pxdWatermark.Services;
+using pxdWatermark.Views;
 
-namespace PaxWatermark;
+namespace pxdWatermark;
 
 public partial class App : Application
 {
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        Styles.Add(PaxStandard.PaxChrome.Styles());   // caption-button hover colours of the PAX title bar
+        Styles.Add(pxdStandard.pxdChrome.Styles());   // caption-button hover colours of the pxd title bar
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -21,7 +21,7 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
         {
             var window = new MainWindow(AppSettings.Load());
-            PaxStandard.PaxChrome.RememberPlacement(window, "main");
+            pxdStandard.pxdChrome.RememberPlacement(window, "main");
             lifetime.MainWindow = window;
 
             var restoreTo = window.WindowState;

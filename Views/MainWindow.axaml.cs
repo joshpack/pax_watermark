@@ -8,11 +8,11 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-using PaxWatermark.Imaging;
-using PaxWatermark.Services;
+using pxdWatermark.Imaging;
+using pxdWatermark.Services;
 using SkiaSharp;
 
-namespace PaxWatermark.Views;
+namespace pxdWatermark.Views;
 
 /// <summary>The whole app: open a photo and a watermark, place it, save one image or stamp a folder.</summary>
 public partial class MainWindow : Window
@@ -43,10 +43,10 @@ public partial class MainWindow : Window
         _s = settings;
         InitializeComponent();
         Icon = AppIcon.Create(128);
-        // The PAX title bar replaces the system one (detach the XAML body first so it can be re-parented).
+        // The pxd title bar replaces the system one (detach the XAML body first so it can be re-parented).
         var body = (Control)Content!;
         Content = null;
-        Content = PaxStandard.PaxChrome.Wrap(this, body, "PAX Watermark", BrandIcon.Render(36));
+        Content = pxdStandard.pxdChrome.Wrap(this, body, "pxd Watermark", BrandIcon.Render(36));
         Ctl<ContentControl>("HeaderArt").Content = AppIcon.Art();
 
         _loading = true;

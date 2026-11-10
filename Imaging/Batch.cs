@@ -1,6 +1,6 @@
 using SkiaSharp;
 
-namespace PaxWatermark.Imaging;
+namespace pxdWatermark.Imaging;
 
 public sealed record BatchResult(string OutputFolder, int Done, IReadOnlyList<string> Failed, int Skipped);
 

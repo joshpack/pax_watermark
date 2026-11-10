@@ -5,10 +5,10 @@
     <TargetFramework>net10.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>PaxWatermark</RootNamespace>
-    <AssemblyName>PaxWatermark</AssemblyName>
-    <Version>1.1.0</Version>
-    <Product>PAX Watermark</Product>
+    <RootNamespace>pxdWatermark</RootNamespace>
+    <AssemblyName>pxdWatermark</AssemblyName>
+    <Version>1.2.0</Version>
+    <Product>pxd Watermark</Product>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <!-- Keep memory low: no background GC thread, no profile-guided tiering, no ICU culture data. -->
     <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
@@ -18,9 +18,9 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
-  <!-- Written by PaxWatermark.exe with the write-icon option (see README); the build works without it. -->
-  <PropertyGroup Condition="Exists('Assets\PaxWatermark.ico')">
-    <ApplicationIcon>Assets\PaxWatermark.ico</ApplicationIcon>
+  <!-- Written by pxdWatermark.exe with the write-icon option (see README); the build works without it. -->
+  <PropertyGroup Condition="Exists('Assets\pxdWatermark.ico')">
+    <ApplicationIcon>Assets\pxdWatermark.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

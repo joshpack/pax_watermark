@@ -3,9 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using PaxWatermark.Imaging;
+using pxdWatermark.Imaging;
 
-namespace PaxWatermark.Views;
+namespace pxdWatermark.Views;
 
 /// <summary>
 /// The live preview: the photo at the current zoom with the watermark drawn on top, exactly where the saved file will

@@ -1,6 +1,6 @@
 using SkiaSharp;
 
-namespace PaxWatermark.Imaging;
+namespace pxdWatermark.Imaging;
 
 /// <summary>
 /// Where the watermark goes, relative to the photo, so the same placement fits photos of any size:

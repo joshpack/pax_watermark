@@ -3,16 +3,16 @@ using Avalonia;
 using Avalonia.LogicalTree;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
-using PaxWatermark.Imaging;
-using PaxWatermark.Services;
-using PaxWatermark.Views;
+using pxdWatermark.Imaging;
+using pxdWatermark.Services;
+using pxdWatermark.Views;
 using SkiaSharp;
 
-namespace PaxWatermark;
+namespace pxdWatermark;
 
 /// <summary>
 /// --self-test DIR: stamps generated pictures (no real photos are read) one at a time and as a batch, checks the
-/// outputs, renders the main window (with its PAX title bar) to PNGs and checks remembered placement and the
+/// outputs, renders the main window (with its pxd title bar) to PNGs and checks remembered placement and the
 /// single-instance hand-off. It runs on Avalonia's headless platform: no OS window is created, so nothing appears on the screen.
 /// </summary>
 internal static class SelfTest
@@ -53,8 +53,8 @@ internal static class SelfTest
         _r = report;
         _ok = true;
         var dir = Dir!;
-        report.AppendLine($"PAX Watermark {typeof(SelfTest).Assembly.GetName().Version?.ToString(3)} self-test");
-        report.AppendLine($"Settings folder: {(AppSettings.Folder.StartsWith(dir, StringComparison.OrdinalIgnoreCase) ? "<test dir>\\data" : "PAXWM_DATA")}");
+        report.AppendLine($"pxd Watermark {typeof(SelfTest).Assembly.GetName().Version?.ToString(3)} self-test");
+        report.AppendLine($"Settings folder: {(AppSettings.Folder.StartsWith(dir, StringComparison.OrdinalIgnoreCase) ? "<test dir>\\data" : "PXDWM_DATA")}");
 
         using var photo = Photo(1600, 1000);
         using var watermark = Watermark(640, 240);
@@ -172,10 +172,30 @@ internal static class SelfTest
 
         CheckPlacement();
         CheckSingleInstance();
+        CheckMigration();
         return _ok;
     }
 
-    /// <summary>PaxChrome.RememberPlacement: a moved and resized window is saved and restored; a spot off every screen is ignored.</summary>
+    /// <summary>The settings folder under the former name moves to the new one once; a second run changes nothing.</summary>
+    private static void CheckMigration()
+    {
+        var root = Path.Combine(Dir!, "migrate");
+        if (Directory.Exists(root))
+            Directory.Delete(root, recursive: true);
+        var oldDir = Path.Combine(root, pxdStandard.pxdMigrate.FormerName(Program.AppId));
+        var newDir = Path.Combine(root, Program.AppId);
+        Directory.CreateDirectory(oldDir);
+        File.WriteAllText(Path.Combine(oldDir, "settings.json"), """{"Size":0.25}""");
+
+        var first = Migration.Run(root);
+        Check("Migration: former settings folder moved to the new name",
+            first && !Directory.Exists(oldDir) && File.Exists(Path.Combine(newDir, "settings.json")) && File.ReadAllText(Path.Combine(newDir, "settings.json")).Contains("0.25"));
+        File.WriteAllText(Path.Combine(newDir, "settings.json"), """{"Size":0.5}""");
+        var second = Migration.Run(root);
+        Check("Migration: second run is a no-op", !second && File.ReadAllText(Path.Combine(newDir, "settings.json")).Contains("0.5"));
+    }
+
+    /// <summary>pxdChrome.RememberPlacement: a moved and resized window is saved and restored; a spot off every screen is ignored.</summary>
     private static void CheckPlacement()
     {
         const string key = "selftest";
@@ -184,7 +204,7 @@ internal static class SelfTest
             File.Delete(file);
 
         var a = OffScreen(new MainWindow(new AppSettings()));
-        PaxStandard.PaxChrome.RememberPlacement(a, key);
+        pxdStandard.pxdChrome.RememberPlacement(a, key);
         a.Show();
         Pump();
         a.Width = 900;
@@ -198,24 +218,24 @@ internal static class SelfTest
 
         // Size comes back; the position is off every screen, so it is ignored and the window keeps its own spot.
         var b = OffScreen(new MainWindow(new AppSettings()));
-        PaxStandard.PaxChrome.RememberPlacement(b, key);
+        pxdStandard.pxdChrome.RememberPlacement(b, key);
         Check("Placement restored (size), off-screen spot ignored", b.Width == 900 && b.Height == 600 && b.Position == new PixelPoint(-30000, -30000),
             $"{b.Width}x{b.Height} at {b.Position}");
 
         // An on-screen spot and the maximized flag come back too (this window is never shown).
         File.WriteAllText(file, """{"selftest":{"X":120,"Y":90,"Width":1000,"Height":640,"Maximized":true}}""");
         var c = OffScreen(new MainWindow(new AppSettings()));
-        PaxStandard.PaxChrome.RememberPlacement(c, key);
+        pxdStandard.pxdChrome.RememberPlacement(c, key);
         Check("Placement restored (position, maximized)", c.Position == new PixelPoint(120, 90) && c.WindowState == WindowState.Maximized && c.Width == 1000,
             $"{c.Width}x{c.Height} at {c.Position}, {c.WindowState}");
         Check("Title bar: icon, name, minimize / maximize / close",
-            HasTitleBar(c, "PAX Watermark", captionButtons: 3));
+            HasTitleBar(c, "pxd Watermark", captionButtons: 3));
     }
 
     /// <summary>A second start hands its arguments to the running copy over the named pipe.</summary>
     private static void CheckSingleInstance()
     {
-        var name = "PaxWatermark-selftest-" + Guid.NewGuid().ToString("N")[..8];
+        var name = "pxdWatermark-selftest-" + Guid.NewGuid().ToString("N")[..8];
         string[]? got = null;
         using var done = new ManualResetEventSlim();
         using (SingleInstance.Listen(name, args => { got = args; done.Set(); }))
@@ -250,8 +270,8 @@ internal static class SelfTest
         return w.WindowDecorations == WindowDecorations.BorderOnly
                && all.OfType<TextBlock>().Any(t => t.Text == title)
                && all.OfType<Image>().Any(i => i.Width == 18)
-               && all.OfType<Button>().Count(b => b.Classes.Contains("pax-caption")) == captionButtons
-               && all.OfType<Button>().Any(b => b.Classes.Contains("pax-close"));
+               && all.OfType<Button>().Count(b => b.Classes.Contains("pxd-caption")) == captionButtons
+               && all.OfType<Button>().Any(b => b.Classes.Contains("pxd-close"));
     }
 
     private static void RenderWindow(string file, Action<MainWindow>? setup)

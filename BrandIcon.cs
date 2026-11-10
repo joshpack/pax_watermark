@@ -4,10 +4,10 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ShapePath = Avalonia.Controls.Shapes.Path;
 
-namespace PaxWatermark;
+namespace pxdWatermark;
 
 /// <summary>
-/// PAX Watermark's icon: a photo with a blue drop stamped on its corner, on a teal tile.
+/// pxd Watermark's icon: a photo with a blue drop stamped on its corner, on a teal tile.
 /// Drawn from vector shapes so it stays crisp at every size; used for the tray, windows and the exe's .ico.
 /// </summary>
 public static class BrandIcon

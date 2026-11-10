@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PaxWatermark.Imaging;
+using pxdWatermark.Imaging;
 
-namespace PaxWatermark.Services;
+namespace pxdWatermark.Services;
 
 /// <summary>What the app remembers between runs, saved as JSON in the per-user app-data folder.</summary>
 public sealed class AppSettings
@@ -25,11 +25,11 @@ public sealed class AppSettings
 
     public bool FitToWindow { get; set; } = true;
 
-    /// <summary>%APPDATA%\PaxWatermark, or the folder in PAXWM_DATA (used by tests to keep the real settings untouched).</summary>
+    /// <summary>%APPDATA%\pxdWatermark, or the folder in PXDWM_DATA (used by tests to keep the real settings untouched).</summary>
     public static string Folder =>
-        Environment.GetEnvironmentVariable("PAXWM_DATA") is { Length: > 0 } custom
+        Environment.GetEnvironmentVariable("PXDWM_DATA") is { Length: > 0 } custom
             ? custom
-            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PaxWatermark");
+            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "pxdWatermark");
 
     public static string FilePath => Path.Combine(Folder, "settings.json");
 

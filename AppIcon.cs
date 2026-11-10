@@ -4,7 +4,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ShapePath = Avalonia.Controls.Shapes.Path;
 
-namespace PaxWatermark;
+namespace pxdWatermark;
 
 /// <summary>The app's mark (a photo with a water drop stamped on its corner), drawn from vector geometry so it stays crisp at every size.</summary>
 public static class AppIcon

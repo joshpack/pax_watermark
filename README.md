@@ -1,9 +1,9 @@
-# PAX Watermark
+# pxd Watermark
 
 **Stamp your logo on a photo, or on a whole folder of them.** A small Windows app: open a photo and a watermark image, drag the watermark where you want it, set its size, opacity and rotation, and save. The saved file keeps the photo's full resolution. Batch mode puts the same watermark in the same spot on every image in a folder.
 
 <p align="center">
-  <img src="docs/screenshots/main.png" width="720" alt="PAX Watermark: the dark PAX title bar, a sunset photo with a SAMPLE studio logo tilted in the bottom-right corner, the toolbar above, and the side panel with size, opacity and rotation sliders and a nine-spot position picker">
+  <img src="docs/screenshots/main.png" width="720" alt="pxd Watermark: the dark pxd title bar, a sunset photo with a SAMPLE studio logo tilted in the bottom-right corner, the toolbar above, and the side panel with size, opacity and rotation sliders and a nine-spot position picker">
 </p>
 
 ## Features
@@ -19,7 +19,7 @@
 - **Phone photos come out upright.** The EXIF orientation is applied when a photo is opened.
 - **Remembers** the last folders, the watermark you used last time, and your size, opacity, rotation and position, plus the window's size, position and maximized state.
 - **One copy at a time.** Starting it again (or opening a photo with it) brings the open window to the front instead of starting a second copy.
-- **Works with [PAX Toolkit](https://github.com/joshpack/PaxToolkit):** same dark title bar as the other PAX apps, installed and kept up to date from there.
+- **Works with [pxd Toolkit](https://github.com/joshpack/pxdToolkit):** same dark title bar as the other pxd apps, installed and kept up to date from there.
 
 ## Supported systems
 
@@ -32,14 +32,14 @@
 
 ## Install (Windows)
 
-**With [PAX Toolkit](https://github.com/joshpack/PaxToolkit):** turn on PAX Watermark there and it is downloaded and kept up to date for you.
+**With [pxd Toolkit](https://github.com/joshpack/pxdToolkit):** turn on pxd Watermark there and it is downloaded and kept up to date for you.
 
 **By hand:**
 
 1. Install the **[.NET 10 Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)** (x64) if you don't have it. The plain ".NET Runtime" is enough; the ".NET Desktop Runtime" includes it, so that works too.
-2. Download **`PaxWatermark-1.1.0-win-x64.zip`** from **[the latest release](https://github.com/joshpack/pax_watermark/releases/latest)**.
-3. Unzip it somewhere permanent, for example `%USERPROFILE%\Apps\PaxWatermark`.
-4. Run `PaxWatermark.exe`. It doesn't need administrator rights.
+2. Download **`pxdWatermark-1.2.0-win-x64.zip`** from **[the latest release](https://github.com/joshpack/pxdWatermark/releases/latest)**.
+3. Unzip it somewhere permanent, for example `%USERPROFILE%\Apps\pxdWatermark`.
+4. Run `pxdWatermark.exe`. It doesn't need administrator rights.
 
 The exe isn't code-signed, so SmartScreen may warn the first time: choose **More info → Run anyway**.
 
@@ -60,45 +60,46 @@ The exe isn't code-signed, so SmartScreen may warn the first time: choose **More
 | <kbd>Ctrl</kbd> + <kbd>1</kbd> | 100% |
 | Mouse wheel | Zoom |
 
-You can also start it with a photo: `PaxWatermark.exe "C:\Photos\beach.jpg"` (or use *Open with*).
+You can also start it with a photo: `pxdWatermark.exe "C:\Photos\beach.jpg"` (or use *Open with*).
 
 ## Settings file
 
-Saved as JSON in `%APPDATA%\PaxWatermark\settings.json`: the last folders used for photos, watermarks, saving and batches, the last watermark file, `Size` (watermark width as a share of the photo's width, 0.02 to 1), `Opacity` (0 to 1), `Rotation` (degrees, -180 to 180), `CenterX` and `CenterY` (the watermark's center as a share of the photo's width and height) and `FitToWindow`. The window's size, position and maximized state are kept next to it in `windows.json`. Delete the files to go back to the defaults. The environment variable `PAXWM_DATA` points the app at another folder instead.
+Saved as JSON in `%APPDATA%\pxdWatermark\settings.json`: the last folders used for photos, watermarks, saving and batches, the last watermark file, `Size` (watermark width as a share of the photo's width, 0.02 to 1), `Opacity` (0 to 1), `Rotation` (degrees, -180 to 180), `CenterX` and `CenterY` (the watermark's center as a share of the photo's width and height) and `FitToWindow`. The window's size, position and maximized state are kept next to it in `windows.json`. Delete the files to go back to the defaults. Settings left by the app under its former name are moved here the first time it starts. The environment variable `PXDWM_DATA` points the app at another folder instead.
 
 ## Self-test
 
 ```bat
-PaxWatermark.exe --self-test C:\Temp\paxwm-test
+pxdWatermark.exe --self-test C:\Temp\pxdwm-test
 ```
 
-Generates a made-up photo and logo in memory (no files of yours are read), stamps them one at a time and as a batch over three generated images (JPEG, PNG and WebP of different shapes), checks every output's size, format and that the watermark landed where it should, checks EXIF orientation handling and the settings file, and writes the results to `report.txt`. It also saves `window.png` and `window-empty.png`, pictures of the main window with its title bar, checks that the window's size, position and maximized state are saved and restored (and that a spot no longer on any screen is ignored), and that starting a second copy hands over to the first. Windows are drawn with Avalonia's headless renderer, so nothing appears on your screen. Exit code 0 means everything passed. Settings go to a `data` folder inside the test folder unless `PAXWM_DATA` is set.
+Generates a made-up photo and logo in memory (no files of yours are read), stamps them one at a time and as a batch over three generated images (JPEG, PNG and WebP of different shapes), checks every output's size, format and that the watermark landed where it should, checks EXIF orientation handling and the settings file, and writes the results to `report.txt`. It also saves `window.png` and `window-empty.png`, pictures of the main window with its title bar, checks that the window's size, position and maximized state are saved and restored (and that a spot no longer on any screen is ignored), and that starting a second copy hands over to the first. Windows are drawn with Avalonia's headless renderer, so nothing appears on your screen. Exit code 0 means everything passed. Settings go to a `data` folder inside the test folder unless `PXDWM_DATA` is set.
 
 ## Uninstall
 
-Delete the app folder and `%APPDATA%\PaxWatermark`.
+Delete the app folder and `%APPDATA%\pxdWatermark`.
 
 ## Build from source
 
 Windows with the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0):
 
 ```bash
-git clone https://github.com/joshpack/pax_watermark.git
-cd pax_watermark
+git clone https://github.com/joshpack/pxdWatermark.git
+cd pxdWatermark
 dotnet run
 dotnet publish -c Release -r win-x64 --self-contained false -p:DebugType=none -o publish/win-x64
 ```
 
-The version comes from `<Version>` in `PaxWatermark.csproj`. For a copy that doesn't need the .NET Runtime installed, use `--self-contained true` (a bigger download).
+The version comes from `<Version>` in `pxdWatermark.csproj`. For a copy that doesn't need the .NET Runtime installed, use `--self-contained true` (a bigger download).
 
-The exe's icon is `Assets/PaxWatermark.ico`, drawn by the app itself: `PaxWatermark.exe --write-icon Assets\PaxWatermark.ico` (give a `.png` path for a 256 px PNG instead).
+The exe's icon is `Assets/pxdWatermark.ico`, drawn by the app itself: `pxdWatermark.exe --write-icon Assets\pxdWatermark.ico` (give a `.png` path for a 256 px PNG instead).
 
 ## Code layout
 
 | Path | What's there |
 | --- | --- |
 | `Program.cs` | Start-up, `--write-icon` and `--self-test` |
-| `PaxStandard.cs` | The PAX title bar and remembered window placement, shared by the PAX apps |
+| `pxdStandard.cs` | The pxd title bar and remembered window placement, shared by the pxd apps |
+| `Migration.cs` | Moves settings kept under the app's former name (first start after the rename) |
 | `SingleInstance.cs` | Hands a second start over to the running copy |
 | `App.axaml(.cs)` | Theme and opening the main window |
 | `Views/MainWindow.axaml(.cs)` | The window: toolbar, side panel, zoom, saving and batch |
@@ -114,7 +115,7 @@ Built with [Avalonia](https://avaloniaui.net/) 12 and SkiaSharp on .NET 10.
 
 ## Support development
 
-If PAX Watermark is useful to you, you can support further development:
+If pxd Watermark is useful to you, you can support further development:
 
 [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=KQWZC2DC7Z7ZW)
 
