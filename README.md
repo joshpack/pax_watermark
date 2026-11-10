@@ -37,9 +37,11 @@
 **By hand:**
 
 1. Install the **[.NET 10 Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)** (x64) if you don't have it. The plain ".NET Runtime" is enough; the ".NET Desktop Runtime" includes it, so that works too.
-2. Download **`pxdWatermark-1.2.0-win-x64.zip`** from **[the latest release](https://github.com/joshpack/pxdWatermark/releases/latest)**.
+2. Download **`pxdWatermark-1.2.1-win-x64.zip`** from **[the latest release](https://github.com/joshpack/pxdWatermark/releases/latest)**.
 3. Unzip it somewhere permanent, for example `%USERPROFILE%\Apps\pxdWatermark`.
 4. Run `pxdWatermark.exe`. It doesn't need administrator rights.
+
+Each time it starts, it checks for a newer release and installs it into its own folder before opening (a few seconds at most; it just opens when offline). Set `PXD_NO_UPDATE=1` to turn that off.
 
 The exe isn't code-signed, so SmartScreen may warn the first time: choose **More info → Run anyway**.
 
@@ -109,6 +111,7 @@ The exe's icon is `Assets/pxdWatermark.ico`, drawn by the app itself: `pxdWaterm
 | `Services/AppSettings.cs` | Settings |
 | `AppIcon.cs` | The app icon, drawn in code |
 | `SelfTest.cs` | `--self-test` |
+| `SelfTestUpdate.cs` | Self-test of updating before start (a made-up release on a local server, temp folders) |
 | `docs/` | The icon and the screenshot in this file |
 
 Built with [Avalonia](https://avaloniaui.net/) 12 and SkiaSharp on .NET 10.

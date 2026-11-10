@@ -173,6 +173,9 @@ internal static class SelfTest
         CheckPlacement();
         CheckSingleInstance();
         CheckMigration();
+        // Updating before start: a fake release on a local HttpListener, temp folders only.
+        foreach (var (name, ok, detail) in Task.Run(() => SelfTestUpdate.RunAsync(dir)).GetAwaiter().GetResult())
+            Check(name, ok, detail);
         return _ok;
     }
 
