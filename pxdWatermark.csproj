@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>pxdWatermark</RootNamespace>
     <AssemblyName>pxdWatermark</AssemblyName>
-    <Version>1.2.1</Version>
+    <Version>1.2.2</Version>
     <Product>pxd Watermark</Product>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <!-- Keep memory low: no background GC thread, no profile-guided tiering, no ICU culture data. -->

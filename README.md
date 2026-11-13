@@ -19,7 +19,7 @@
 - **Phone photos come out upright.** The EXIF orientation is applied when a photo is opened.
 - **Remembers** the last folders, the watermark you used last time, and your size, opacity, rotation and position, plus the window's size, position and maximized state.
 - **One copy at a time.** Starting it again (or opening a photo with it) brings the open window to the front instead of starting a second copy.
-- **Works with [pxd Toolkit](https://github.com/joshpack/pxdToolkit):** same dark title bar as the other pxd apps, installed and kept up to date from there.
+- **Works with [pxd Toolkit](https://github.com/pxdtek/pxdToolkit):** same dark title bar as the other pxd apps, installed and kept up to date from there.
 
 ## Supported systems
 
@@ -32,16 +32,16 @@
 
 ## Install (Windows)
 
-**With [pxd Toolkit](https://github.com/joshpack/pxdToolkit):** turn on pxd Watermark there and it is downloaded and kept up to date for you.
+**With [pxd Toolkit](https://github.com/pxdtek/pxdToolkit):** turn on pxd Watermark there and it is downloaded and kept up to date for you.
 
 **By hand:**
 
 1. Install the **[.NET 10 Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)** (x64) if you don't have it. The plain ".NET Runtime" is enough; the ".NET Desktop Runtime" includes it, so that works too.
-2. Download **`pxdWatermark-1.2.1-win-x64.zip`** from **[the latest release](https://github.com/joshpack/pxdWatermark/releases/latest)**.
+2. Download **`pxdWatermark-1.2.2-win-x64.zip`** from **[the latest release](https://github.com/pxdtek/pxdWatermark/releases/latest)**.
 3. Unzip it somewhere permanent, for example `%USERPROFILE%\Apps\pxdWatermark`.
 4. Run `pxdWatermark.exe`. It doesn't need administrator rights.
 
-Each time it starts, it checks for a newer release and installs it into its own folder before opening (a few seconds at most; it just opens when offline). Set `PXD_NO_UPDATE=1` to turn that off.
+Each time it starts, it checks for a newer release (at pxdtek.com, or GitHub when pxdtek.com can't be reached) and installs it into its own folder before opening (a few seconds at most; it just opens when offline). Set `PXD_NO_UPDATE=1` to turn that off.
 
 The exe isn't code-signed, so SmartScreen may warn the first time: choose **More info → Run anyway**.
 
@@ -85,7 +85,7 @@ Delete the app folder and `%APPDATA%\pxdWatermark`.
 Windows with the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0):
 
 ```bash
-git clone https://github.com/joshpack/pxdWatermark.git
+git clone https://github.com/pxdtek/pxdWatermark.git
 cd pxdWatermark
 dotnet run
 dotnet publish -c Release -r win-x64 --self-contained false -p:DebugType=none -o publish/win-x64

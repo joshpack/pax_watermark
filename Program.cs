@@ -8,8 +8,8 @@ internal static class Program
 {
     public const string AppId = "pxdWatermark";
 
-    /// <summary>Where updates come from: this app's GitHub releases and its Windows zip (the same asset the pxd Toolkit installs).</summary>
-    public const string UpdateRepo = "joshpack/pxdWatermark";
+    /// <summary>Where updates come from: this app's releases (asked at pxdtek.com first, GitHub as the fallback) and its Windows zip (the same asset the pxd Toolkit installs).</summary>
+    public const string UpdateRepo = "pxdtek/pxdWatermark";
     public const string UpdateAsset = @"^pxdWatermark-.*-win-x64\.zip$";
 
     /// <summary>Runs that never update first: the build step.</summary>
@@ -19,7 +19,7 @@ internal static class Program
     public static int Main(string[] args)
     {
         // pxd standard rule 6: an installed copy updates itself before it opens, however it was started. A no-op for dev
-        // builds (bin\), --self-test, PXD_NO_UPDATE=1, offline or a slow GitHub; when it updated, the new copy is already starting.
+        // builds (bin\), --self-test, PXD_NO_UPDATE=1, offline or when neither pxdtek.com nor GitHub answers in time; when it updated, the new copy is already starting.
         if (!args.Any(a => NoUpdateArgs.Contains(a, StringComparer.OrdinalIgnoreCase))
             && pxdStandard.pxdUpdate.BeforeStart(UpdateRepo, UpdateAsset, args))
             return 0;
